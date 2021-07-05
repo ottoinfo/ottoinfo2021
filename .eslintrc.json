@@ -67,6 +67,7 @@
       }
     ],
     "lines-between-class-members": 0,
+    "max-classes-per-file": ["warn", 10],
     "max-len": [
       2,
       100,

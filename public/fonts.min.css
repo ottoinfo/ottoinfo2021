@@ -1,0 +1,10 @@
+/* Font Family */
+/* @font-face{font-display:swap;font-family:'Roboto';font-style:italic;font-weight:400;src:local('RobotoSlab'),local('RobotoSlab-Regular'),url(http://localhost/public/fonts/RobotoSlab-Regular.ttf) format('truetype')} */
+/* @font-face{font-display:swap;font-family:'Poppins';font-style:normal;font-weight:100;src:local('Poppins'),local('Poppins-Thin'),url(http://localhost/public/fonts/Poppins-Thin.ttf) format('truetype')} */
+
+
+@font-face {
+  font-display: swap;
+  font-family: Roboto;
+  src: url(/fonts/RobotoSlab-Regular.ttf);
+}

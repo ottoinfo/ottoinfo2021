@@ -1,6 +1,3 @@
-import Logger from'./logger'
-import { parsePaletteErrorsForClient }  from '../apis/helpers'
-
 const { APP_ENV, NODE_ENV } = process.env
 const isDev = NODE_ENV === 'development' || APP_ENV === 'local'
 
@@ -12,15 +9,23 @@ export const ERRORS = {
 }
 
 export const MESSAGES = {
+  API: 'Error on API',
   UNKNOWN_API: 'Error Unknown API URL',
   XSS_ATTACK: 'Invalid characters in route/path',
 }
 
+interface CustomError extends Error {
+  endpoint: string
+  data: any
+}
+
 // https://nodejs.org/api/errors.html
 class CustomError extends Error {
-  constructor(data) {
-    // data:Object = { message, data, ...etc}
-    super(data)
+  constructor(data: CustomError) {
+    const { message } = data
+    super(message)
+    // Object.setPrototypeOf(this, CustomError.prototype)
+    Object.setPrototypeOf(this, new.target.prototype)
     // Ensure the name of this error is the same as the class name
     this.name = this.constructor.name
     // We ONLY want logging turned on ALWAYS for DEVELOP, otherwise override for ENV/ERRORS when needed
@@ -28,27 +33,31 @@ class CustomError extends Error {
   }
 }
 
-
 export class ApiError extends CustomError {
-  constructor(data) {
+  constructor(data: any) {
     const { endpoint } = data
-    super(`${MESSAGES.API}: ${endpoint || 'Unknown Endpoint'}`)
+    data.message = `${MESSAGES.API}: ${endpoint || 'Unknown Endpoint'}`
+    super(data)
     this.data = { ...this.data, type: ERRORS.API, ...data }
   }
 }
 
 export class UnknownAPIError extends CustomError {
-  constructor(data) {
+  constructor(data: any) {
     const { endpoint } = data
-    super(`${MESSAGES.UNKNOWN_API}: ${endpoint || 'Unknown Endpoint'}`)
+    data.message = `${MESSAGES.UNKNOWN_API}: ${endpoint || 'Unknown Endpoint'}`
+    super(data)
     this.data = { ...this.data, type: ERRORS.UNKNOWN_API, ...data }
   }
 }
 
 export class XSSAttackError extends CustomError {
-  constructor(data) {
+  constructor(data: any) {
     const { endpoint } = data
-    super(`${MESSAGES.XSS_ATTACK}: ${endpoint || 'Unknown Endpoint'}`)
+    data.message = `${MESSAGES.XSS_ATTACK}: ${endpoint || 'Unknown Endpoint'}`
+    super(data)
     this.data = { ...this.data, log: true, type: ERRORS.XSS_ATTACK, ...data }
   }
 }
+
+export default CustomError
