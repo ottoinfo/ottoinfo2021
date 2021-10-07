@@ -36,13 +36,24 @@ const apiErrorHandlerMiddleware = (
           ...(message ? { message } : {}),
           ...(isDev ? { error } : {}), // Show as much INFORMATION as possible in DEVELOPMENT
         })
+      case ERRORS.DATABASE:
+        return res.status(statusCode || 500).json({
+          ...errorPayload,
+          ...(message ? { message } : {}),
+          ...(isDev ? { error } : {}), // Show as much INFORMATION as possible in DEVELOPMENT
+        })
       case ERRORS.UNKNOWN_API:
         return res.status(500).json({ ...errorPayload, message: 'Unknown API Endpoint' })
       case ERRORS.XSS_ATTACK:
         return res.redirect(301, '/')
-      default:
+      case ERRORS.UNKNOWN_ROUTE:
+      default: {
         // Type - CustomError || Error
-        return res.status(500).send(errorPayload)
+        // return res.status(500).send(errorPayload)
+        res.status(404)
+        const nextJS = req.app.get('nextJS')
+        return nextJS.render(req, res, '/_error')
+      }
     }
   } catch (err) {
     return next(error)

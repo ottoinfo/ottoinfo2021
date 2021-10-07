@@ -6,17 +6,27 @@ const Component = () => {
   return (
     <section data-section='experience'>
       <h3>Experience</h3>
-      <ul>
-        {EXPERIENCE.map((job) => {
-          const { start, stop, company, title, description } = job
+      <ul data-type='job'>
+        {EXPERIENCE.map((job, key) => {
+          const { start, stop, company, title, description, stack } = job
           const timeWorked = getTimeWorked(start, stop)
           return (
-            <li>
+            <li key={`company-${key}`}>
               <p data-type='company'>
                 {company} <span data-type='time'>{timeWorked || ''}</span>
               </p>
               <p data-type='title'>{title}</p>
               <p data-type='description'>{description}</p>
+
+              <ul data-type='job-stack'>
+                {stack?.map((item) => {
+                  return (
+                    <li data-type='stack' key={`company-stack-${item}`}>
+                      {item}
+                    </li>
+                  )
+                })}
+              </ul>
             </li>
           )
         })}
